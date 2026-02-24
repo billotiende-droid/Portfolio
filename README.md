@@ -1,7 +1,7 @@
 ## Bill Otiende | Portfolio
 
-A modern portfolio web app built with Next.js and Tailwind CSS. It highlights problem-solving impact,
-full stack expertise, and ATS-friendly experience summaries.
+A modern portfolio web app built with Next.js and Tailwind CSS. It highlights problem-solving impact and
+full stack expertise
 
 ## Features
 
