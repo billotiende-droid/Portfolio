@@ -1,31 +1,43 @@
 ## Bill Otiende | Portfolio
 
-A simple personal portfolio website built with HTML, Tailwind CSS, and JavaScript (for future enhancements).
-It showcases my skills, projects, and contact details as a Junior Full Stack Web Developer.
+A modern portfolio web app built with Next.js and Tailwind CSS. It highlights problem-solving impact,
+full stack expertise, and ATS-friendly experience summaries.
 
 ## Features
 
-Responsive and clean layout
-
-“Hire Me” and “Download CV” call-to-action buttons
-
-Modern design with Tailwind CSS
-
-Profile section with a short bio and image
+- Multi-page navigation: Home, Services, About Me, Portfolio, Contact
+- Problem-solver framing with measurable outcomes
+- API endpoints for “Hire Me” and “Download CV” buttons
+- Responsive layout with Tailwind CSS
 
 ## Tech Stack
 
-HTML5
-
-Tailwind CSS
+- Next.js (App Router)
+- React
+- Tailwind CSS
 
 ## Setup
 
-Clone this repository
+Install dependencies:
 
-Open index.html in your browser
+```bash
+npm install
+```
+
+Start the dev server:
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser.
+
+## API Endpoints
+
+- `POST /api/hire` — returns a confirmation message
+- `GET /api/cv` — downloads a text CV
 
 ## Contact
 
 Bill Otiende
-[bill.otiende@student.moringaschool.com]
+bill.otiende@student.moringaschool.com
