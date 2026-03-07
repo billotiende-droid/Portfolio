@@ -34,32 +34,34 @@ export const profile = {
   ],
   projects: [
     {
-      name: "InsightHub Analytics",
-      problem: "Stakeholders lacked real-time visibility into customer churn.",
+      name: "Multi-Vendor Food Court - Food Ordering Platform",
+      problem: "Restaurants in shared food courts lacked a centralized system for managing digital orders.",
       solution:
-        "Built a data ingestion service and React dashboard with cohort analysis.",
-      impact: "Improved retention planning with weekly churn insights.",
+        "Built a multi-vendor ordering platform allowing restaurants to manage menus while customers place and track orders.",
+      impact: "Simplified order coordination across multiple vendors while demonstrating marketplace-style application design.",
+      architecture: "React frontend, Flask backend services, PostgreSQL database supporting vendor accounts, menu management, and order tracking.",
+      stack: "Next.js, React, Flask, PostgreSQL",
+    },
+    {
+      name: "Safiri Auto - Vehicle Rental MarketPlace",
+      problem: "Car rental services often rely on manual booking systems that lead to scheduling conflicts and poor availability visibility",
+      solution:
+        "Developed a web marketplace enabling customers to search vehicles, check availability, and manage bookings online.",
+      impact: "Improved booking workflow efficiency and demonstrated real-time reservation logic and scalable backend architecture.",
+      architecture: "React frontend with Flask APIs and PostgreSQL database for vehicle inventory, bookings, and user authentication.",
       stack: "React, Flask, PostgreSQL",
     },
     {
-      name: "SupplyChain Pulse",
-      problem: "Manual shipment tracking caused costly delays.",
+      name: "Gadget Store KE - Full-Stack E-Commerce Platform",
+      problem: "Small retailers lacked an affordable platform to sell gadgets online and manage orders efficiently",
       solution:
-        "Implemented event-driven tracking and alerting with role-based access.",
-      impact: "Reduced exception handling time by 32%.",
-      stack: "Next.js, Node.js, PostgreSQL",
-    },
-    {
-      name: "CivicConnect Portal",
-      problem: "Citizen service requests were fragmented and untracked.",
-      solution:
-        "Delivered a unified portal with automated status updates.",
-      impact: "Increased completion rate by 25%.",
-      stack: "React, Flask, Redis",
+        "Built a full-stack e-commerce platform allowing customers to browse products, manage carts, and complete purchases.",
+      impact: "Streamlined online purchasing and order tracking while demonstrating scalable API design and responsive UI development.",
+      stack: "React, Flask, PostgreSQL",
     },
   ],
   contact: {
-    email: "bill.ot@example.com",
+    email: "allanbill34@gmail.com",
     location: "Nairobi, Kenya",
     availability: "Open to full-time and contract roles",
   },
