@@ -40,4 +40,4 @@ Open `http://localhost:3000` in your browser.
 ## Contact
 
 Bill Otiende
-bill.otiende@student.moringaschool.com
+allanbill34@gmail.com
