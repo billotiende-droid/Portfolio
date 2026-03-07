@@ -24,6 +24,9 @@ export default function PortfolioPage() {
             <p className="mt-2 text-sm leading-relaxed">
               <span className="font-semibold text-white">Impact:</span> {project.impact}
             </p>
+            <p className="mt-2 text-sm leading-relaxed">
+              <span className="font-semibold text-white">Architecture:</span> {project.architecture}
+            </p>
             <p className="mt-2 text-sm text-yellow-200">{project.stack}</p>
           </article>
         ))}
