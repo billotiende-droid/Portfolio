@@ -1,34 +1,188 @@
-import type {VercelRequest, VercelResponse } from '@vercel/node';
+import { NextRequest, NextResponse } from 'next/server';
+import nodemailer from 'nodemailer';
 
+// Type definition for the request body
+interface HireRequestBody {
+  name: string;
+  email: string;
+  message: string;
+}
 
-const nodemailer = require('nodemailer');
+// Type definition for validation errors
+interface ValidationError {
+  field: string;
+  message: string;
+}
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-    if(req.method !== 'POST') {
-        return res.status(405).json({error: 'Method not allowed'});
+/**
+ * Validates the incoming request body
+ * @param body - The parsed request body
+ * @returns Array of validation errors, empty if valid
+ */
+function validateRequestBody(body: unknown): ValidationError[] {
+  const errors: ValidationError[] = [];
+  
+  if (!body || typeof body !== 'object') {
+    errors.push({ field: 'body', message: 'Request body is required' });
+    return errors;
+  }
+
+  const { name, email, message } = body as Record<string, unknown>;
+
+  // Validate name
+  if (!name || typeof name !== 'string') {
+    errors.push({ field: 'name', message: 'Name is required' });
+  } else if (name.trim().length < 2) {
+    errors.push({ field: 'name', message: 'Name must be at least 2 characters' });
+  } else if (name.trim().length > 100) {
+    errors.push({ field: 'name', message: 'Name must be less than 100 characters' });
+  }
+
+  // Validate email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || typeof email !== 'string') {
+    errors.push({ field: 'email', message: 'Email is required' });
+  } else if (!emailRegex.test(email)) {
+    errors.push({ field: 'email', message: 'Invalid email format' });
+  }
+
+  // Validate message
+  if (!message || typeof message !== 'string') {
+    errors.push({ field: 'message', message: 'Message is required' });
+  } else if (message.trim().length < 10) {
+    errors.push({ field: 'message', message: 'Message must be at least 10 characters' });
+  } else if (message.trim().length > 2000) {
+    errors.push({ field: 'message', message: 'Message must be less than 2000 characters' });
+  }
+
+  return errors;
+}
+
+/**
+ * Creates and configures the nodemailer transporter
+ * Uses environment variables for configuration
+ */
+function createTransporter() {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPass) {
+    throw new Error('Email configuration is missing. Please set EMAIL_USER and EMAIL_PASS environment variables.');
+  }
+
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: emailUser,
+      pass: emailPass,
+    },
+    // Add timeout configuration for better performance
+    pool: true,
+    maxConnections: 1,
+    rateLimit: 5,
+  });
+}
+
+/**
+ * Sanitize input to prevent injection attacks
+ * @param input - The string to sanitize
+ * @returns Sanitized string
+ */
+function sanitizeInput(input: string): string {
+  // Remove potentially dangerous characters while preserving legitimate content
+  return input
+    .replace(/[\x00-\x1F\x7F]/g, '') // Remove control characters
+    .trim();
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    // Only allow POST method
+    if (request.method !== 'POST') {
+      return NextResponse.json(
+        { error: 'Method not allowed. Use POST request.' },
+        { status: 405 }
+      );
     }
 
-    const {name, email, message}:{name:string; email:string; message:string} = req.body;
-
-    const transporter = nodemailer.createTransport ({
-        service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    });
+    // Parse and validate request body
+    let body: HireRequestBody;
     try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Invalid JSON body' },
+        { status: 400 }
+      );
+    }
+
+    // Validate inputs
+    const validationErrors = validateRequestBody(body);
+    if (validationErrors.length > 0) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validationErrors },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize inputs
+    const sanitizedName = sanitizeInput(body.name);
+    const sanitizedEmail = sanitizeInput(body.email);
+    const sanitizedMessage = sanitizeInput(body.message);
+
+    // Create transporter and send email
+    const transporter = createTransporter();
+    
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      replyTo: email,
-      subject: `Portfolio Message: ${name}`,
-      text: `From: ${name} (${email})\n\n${message}`,
+      replyTo: sanitizedEmail,
+      subject: `Portfolio Message: ${sanitizedName}`,
+      text: `From: ${sanitizedName} (${sanitizedEmail})\n\n${sanitizedMessage}`,
+      // Add HTML alternative for better email client support
+      html: `
+        <h2>New Portfolio Message</h2>
+        <p><strong>From:</strong> ${sanitizedName} (${sanitizedEmail})</p>
+        <hr />
+        <p>${sanitizedMessage.replace(/\n/g, '<br>')}</p>
+      `,
     });
 
-    return res.status(200).json({ success: true });
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message });
-  }
+    return NextResponse.json(
+      { success: true, message: 'Email sent successfully' },
+      { status: 200 }
+    );
 
+  } catch (error) {
+    // Log error for debugging (in production, use proper logging service)
+    console.error('Email sending error:', error);
+
+    // Return generic error message to avoid leaking implementation details
+    return NextResponse.json(
+      { error: 'Failed to send email. Please try again later.' },
+      { status: 500 }
+    );
+  }
+}
+
+// Handle other HTTP methods with appropriate responses
+export async function GET(): Promise<NextResponse> {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST request.' },
+    { status: 405 }
+  );
+}
+
+export async function PUT(): Promise<NextResponse> {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST request.' },
+    { status: 405 }
+  );
+}
+
+export async function DELETE(): Promise<NextResponse> {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST request.' },
+    { status: 405 }
+  );
 }
