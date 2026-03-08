@@ -11,9 +11,9 @@ export const profile = {
     "Collaborating in agile teams with Git-based workflows",
   ],
   outcomes: [
-    "Reduced page load times by 45% through query optimization and lazy loading",
-    "Automated reporting pipelines that saved 10+ hours per week",
-    "Delivered secure, role-based access for multi-tenant dashboards",
+    "Improved page load performance by ~40% by optimizing database queries and implementing lazy loading in React components.",
+    "Streamlined order and reporting workflows, reducing manual tracking and saving 8–10 hours of operational work weekly.",
+    "Implemented secure authentication and role-based access control for admin, vendor, and customer dashboards in multi-user applications.",
   ],
   services: [
     {
@@ -62,6 +62,8 @@ export const profile = {
   ],
   contact: {
     email: "allanbill34@gmail.com",
+    github:"github.com/billotiende-droid",
+    linkedin:"www.linkedin.com/in/bill-otiende-6b74193a7",
     location: "Nairobi, Kenya",
     availability: "Open to full-time and contract roles",
   },
