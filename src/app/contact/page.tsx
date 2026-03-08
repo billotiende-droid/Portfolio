@@ -15,6 +15,12 @@ export default function ContactPage() {
             <li>
               <span className="font-semibold text-white">Email:</span> {profile.contact.email}
             </li>
+             <li>
+              <span className="font-semibold text-white">Github:</span> {profile.contact.github}
+            </li>
+             <li>
+              <span className="font-semibold text-white">Linkedin:</span> {profile.contact.linkedin}
+            </li>
             <li>
               <span className="font-semibold text-white">Location:</span> {profile.contact.location}
             </li>
