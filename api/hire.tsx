@@ -14,6 +14,37 @@ interface ValidationError {
   message: string;
 }
 
+// Create transporter at module level for reuse across warm function executions
+// This is more efficient for high-traffic sites as it avoids recreating the transporter
+let transporter: nodemailer.Transporter | null = null;
+
+function getTransporter(): nodemailer.Transporter {
+  if (transporter) {
+    return transporter;
+  }
+
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPass) {
+    throw new Error('Email configuration is missing. Please set EMAIL_USER and EMAIL_PASS environment variables.');
+  }
+
+  transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: emailUser,
+      pass: emailPass,
+    },
+    // Connection pooling for better performance
+    pool: true,
+    maxConnections: 1,
+    rateLimit: 5,
+  });
+
+  return transporter;
+}
+
 /**
  * Validates the incoming request body
  * @param body - The parsed request body
@@ -56,31 +87,6 @@ function validateRequestBody(body: unknown): ValidationError[] {
   }
 
   return errors;
-}
-
-/**
- * Creates and configures the nodemailer transporter
- * Uses environment variables for configuration
- */
-function createTransporter() {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = process.env.EMAIL_PASS;
-
-  if (!emailUser || !emailPass) {
-    throw new Error('Email configuration is missing. Please set EMAIL_USER and EMAIL_PASS environment variables.');
-  }
-
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: emailUser,
-      pass: emailPass,
-    },
-    // Add timeout configuration for better performance
-    pool: true,
-    maxConnections: 1,
-    rateLimit: 5,
-  });
 }
 
 /**
@@ -130,10 +136,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const sanitizedEmail = sanitizeInput(body.email);
     const sanitizedMessage = sanitizeInput(body.message);
 
-    // Create transporter and send email
-    const transporter = createTransporter();
+    // Get reusable transporter and send email
+    const mailTransporter = getTransporter();
     
-    await transporter.sendMail({
+    await mailTransporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
       replyTo: sanitizedEmail,
