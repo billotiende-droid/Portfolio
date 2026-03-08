@@ -17,6 +17,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       pass: process.env.EMAIL_PASS,
     },
     });
-    
+    try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      replyTo: email,
+      subject: `Portfolio Message: ${name}`,
+      text: `From: ${name} (${email})\n\n${message}`,
+    });
+
+    return res.status(200).json({ success: true });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
 
 }
