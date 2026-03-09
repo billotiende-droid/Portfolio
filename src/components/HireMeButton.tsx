@@ -1,49 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { profile } from "@/data/profile";
 
 type HireMeButtonProps = {
   className?: string;
 };
 
+declare global {
+  interface Window {
+    Calendly: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
+
 export default function HireMeButton({ className }: HireMeButtonProps) {
-  const [status, setStatus] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const calendlyUrl = profile.contact.calendlyUrl;
 
-  const handleHireMe = async () => {
-    setIsLoading(true);
-    setStatus(null);
-
-    try {
-      const response = await fetch("/api/hire", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ source: "portfolio" }),
-      });
-
-      const data = await response.json();
-      setStatus(data.message ?? "Thanks for reaching out!");
-    } catch {
-      setStatus("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+  const handleHireMe = () => {
+    if (window.Calendly && calendlyUrl) {
+      window.Calendly.initPopupWidget({ url: calendlyUrl });
+    } else {
+      // Fallback: open in new tab if Calendly hasn't loaded
+      window.open(calendlyUrl, "_blank");
     }
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={handleHireMe}
-        disabled={isLoading}
-        className={
-          className ??
-          "bg-blue-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition"
-        }
-      >
-        {isLoading ? "Sending..." : "Hire Me"}
-      </button>
-      {status ? <span className="text-sm text-yellow-200">{status}</span> : null}
-    </div>
+    <button
+      type="button"
+      onClick={handleHireMe}
+      className={
+        className ??
+        "bg-blue-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition"
+      }
+    >
+      Hire Me
+    </button>
   );
 }
