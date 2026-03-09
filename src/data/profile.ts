@@ -66,5 +66,6 @@ export const profile = {
     linkedin:"www.linkedin.com/in/bill-otiende-6b74193a7",
     location: "Nairobi, Kenya",
     availability: "Open to full-time and contract roles",
+    calendlyUrl: "https://calendly.com/allanbill34/30min",
   },
 };
