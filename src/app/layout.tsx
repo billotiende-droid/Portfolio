@@ -14,6 +14,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link
+          href="https://assets.calendly.com/assets/external/widget.css"
+          rel="stylesheet"
+        />
+        <script
+          src="https://assets.calendly.com/assets/external/widget.js"
+          async
+        />
+      </head>
       <body>
         <div className="max-w-7xl mx-auto mt-14 p-9 border border-gray-300 rounded-lg min-h-[80vh] bg-black/40">
           <NavBar />
